@@ -1,4 +1,4 @@
-// Mock data for Finaira Screening Hub
+// Mock data for Nexus Guard
 export const kpis = {
   todayScreenings: 12847,
   potentialMatches: 342,
@@ -16,21 +16,6 @@ export const volumeTrend = [
   { day: "Fri", screenings: 12847, matches: 342 },
   { day: "Sat", screenings: 6210, matches: 121 },
   { day: "Sun", screenings: 4980, matches: 89 },
-];
-
-export const matchDistribution = [
-  { name: "Sanctions", value: 142, color: "var(--color-chart-5)" },
-  { name: "PEP", value: 118, color: "var(--color-chart-1)" },
-  { name: "Adverse Media", value: 62, color: "var(--color-chart-4)" },
-  { name: "Internal Watchlist", value: 20, color: "var(--color-chart-2)" },
-];
-
-export const analystWorkload = [
-  { name: "S. Whitmore", open: 14, closed: 38 },
-  { name: "A. Okafor", open: 9, closed: 41 },
-  { name: "M. Tanaka", open: 12, closed: 29 },
-  { name: "L. Rosales", open: 7, closed: 33 },
-  { name: "R. Bergström", open: 11, closed: 25 },
 ];
 
 export const recentActivity = [
@@ -75,24 +60,95 @@ export const screeningSources = [
 
 export type Case = {
   id: string;
+  batchId: string;
   customer: string;
   date: string;
   risk: "Low" | "Medium" | "High" | "Critical";
   analyst: string;
   status: "New" | "Under Review" | "Escalated" | "Approved" | "Rejected" | "Closed";
+  riskScore: number;
+  matchConfidence: number;
+  falsePositiveProbability: number;
+  severity: "Low" | "Moderate" | "High" | "Severe";
+  recommendedAction: string;
+  ageHours: number;
+  slaHours: number;
+  bestMatch?: {
+    score: number;
+    watchlist: string;
+    reason: string;
+    dob: string;
+    nationality: string;
+    passport: string;
+  };
 };
 
 export const cases: Case[] = [
-  { id: "CASE-2841", customer: "Alibek N. Yermekov", date: "2026-06-16", risk: "Critical", analyst: "A. Okafor", status: "Escalated" },
-  { id: "CASE-2840", customer: "Polaris Trading SA", date: "2026-06-16", risk: "High", analyst: "S. Whitmore", status: "Under Review" },
-  { id: "CASE-2839", customer: "Maria H. Volkov", date: "2026-06-15", risk: "High", analyst: "M. Tanaka", status: "Under Review" },
-  { id: "CASE-2838", customer: "Nordwind Energy GmbH", date: "2026-06-15", risk: "Medium", analyst: "L. Rosales", status: "New" },
-  { id: "CASE-2837", customer: "Jiang Wei Industries", date: "2026-06-15", risk: "Medium", analyst: "R. Bergström", status: "Under Review" },
-  { id: "CASE-2836", customer: "Rafael S. Mendoza", date: "2026-06-14", risk: "Low", analyst: "S. Whitmore", status: "Approved" },
-  { id: "CASE-2835", customer: "Atlas Maritime Ltd", date: "2026-06-14", risk: "High", analyst: "A. Okafor", status: "Rejected" },
-  { id: "CASE-2834", customer: "Helena K. Brandt", date: "2026-06-14", risk: "Low", analyst: "M. Tanaka", status: "Closed" },
-  { id: "CASE-2833", customer: "Sahel Resources Holding", date: "2026-06-13", risk: "Medium", analyst: "L. Rosales", status: "Closed" },
-  { id: "CASE-2832", customer: "Ivan P. Sokolov", date: "2026-06-13", risk: "Critical", analyst: "A. Okafor", status: "Escalated" },
+  {
+    id: "CASE-2841", batchId: "BATCH-2026-0616-A", customer: "Alibek N. Yermekov", date: "2026-06-16",
+    risk: "Critical", analyst: "A. Okafor", status: "Escalated",
+    riskScore: 94, matchConfidence: 94, falsePositiveProbability: 6, severity: "Severe",
+    recommendedAction: "Freeze account & escalate to MLRO", ageHours: 4, slaHours: 24,
+    bestMatch: { score: 94, watchlist: "OFAC SDN", reason: "Full name + DOB + nationality match", dob: "1971-04-12", nationality: "Kazakhstan", passport: "N04829112" },
+  },
+  {
+    id: "CASE-2840", batchId: "BATCH-2026-0616-A", customer: "Polaris Trading SA", date: "2026-06-16",
+    risk: "High", analyst: "S. Whitmore", status: "Under Review",
+    riskScore: 88, matchConfidence: 82, falsePositiveProbability: 18, severity: "High",
+    recommendedAction: "Request enhanced due diligence", ageHours: 6, slaHours: 24,
+    bestMatch: { score: 88, watchlist: "EU Consolidated", reason: "Beneficial owner sanctioned", dob: "—", nationality: "Panama", passport: "—" },
+  },
+  {
+    id: "CASE-2839", batchId: "BATCH-2026-0615-B", customer: "Maria H. Volkov", date: "2026-06-15",
+    risk: "High", analyst: "M. Tanaka", status: "Under Review",
+    riskScore: 86, matchConfidence: 79, falsePositiveProbability: 21, severity: "High",
+    recommendedAction: "Verify identity & source of funds", ageHours: 22, slaHours: 24,
+    bestMatch: { score: 86, watchlist: "PEP Tier 1", reason: "PEP — head of state family member", dob: "1982-09-11", nationality: "Russia", passport: "73 4129881" },
+  },
+  {
+    id: "CASE-2838", batchId: "BATCH-2026-0615-B", customer: "Nordwind Energy GmbH", date: "2026-06-15",
+    risk: "Medium", analyst: "L. Rosales", status: "New",
+    riskScore: 62, matchConfidence: 58, falsePositiveProbability: 42, severity: "Moderate",
+    recommendedAction: "Analyst review within SLA", ageHours: 18, slaHours: 48,
+  },
+  {
+    id: "CASE-2837", batchId: "BATCH-2026-0615-A", customer: "Jiang Wei Industries", date: "2026-06-15",
+    risk: "Medium", analyst: "R. Bergström", status: "Under Review",
+    riskScore: 58, matchConfidence: 54, falsePositiveProbability: 46, severity: "Moderate",
+    recommendedAction: "Verify corporate registry", ageHours: 28, slaHours: 48,
+  },
+  {
+    id: "CASE-2836", batchId: "BATCH-2026-0614-C", customer: "Rafael S. Mendoza", date: "2026-06-14",
+    risk: "Low", analyst: "S. Whitmore", status: "Approved",
+    riskScore: 22, matchConfidence: 20, falsePositiveProbability: 78, severity: "Low",
+    recommendedAction: "Approve — clear false positive", ageHours: 52, slaHours: 72,
+  },
+  {
+    id: "CASE-2835", batchId: "BATCH-2026-0614-C", customer: "Atlas Maritime Ltd", date: "2026-06-14",
+    risk: "High", analyst: "A. Okafor", status: "Rejected",
+    riskScore: 90, matchConfidence: 88, falsePositiveProbability: 12, severity: "High",
+    recommendedAction: "Reject onboarding", ageHours: 54, slaHours: 72,
+    bestMatch: { score: 90, watchlist: "OFAC SDN", reason: "Sanctioned vessel ownership", dob: "—", nationality: "Greece", passport: "—" },
+  },
+  {
+    id: "CASE-2834", batchId: "BATCH-2026-0614-A", customer: "Helena K. Brandt", date: "2026-06-14",
+    risk: "Low", analyst: "M. Tanaka", status: "Closed",
+    riskScore: 18, matchConfidence: 16, falsePositiveProbability: 84, severity: "Low",
+    recommendedAction: "Closed — no action required", ageHours: 60, slaHours: 72,
+  },
+  {
+    id: "CASE-2833", batchId: "BATCH-2026-0613-B", customer: "Sahel Resources Holding", date: "2026-06-13",
+    risk: "Medium", analyst: "L. Rosales", status: "Closed",
+    riskScore: 64, matchConfidence: 60, falsePositiveProbability: 40, severity: "Moderate",
+    recommendedAction: "Closed with monitoring flag", ageHours: 70, slaHours: 72,
+  },
+  {
+    id: "CASE-2832", batchId: "BATCH-2026-0613-B", customer: "Ivan P. Sokolov", date: "2026-06-13",
+    risk: "Critical", analyst: "A. Okafor", status: "Escalated",
+    riskScore: 96, matchConfidence: 95, falsePositiveProbability: 5, severity: "Severe",
+    recommendedAction: "Freeze & file SAR with FIU", ageHours: 72, slaHours: 24,
+    bestMatch: { score: 96, watchlist: "UN Consolidated", reason: "Direct sanction listing — name + DOB + nationality", dob: "1968-02-03", nationality: "Russia", passport: "75 1290034" },
+  },
 ];
 
 export const watchlistInternal = [
@@ -112,4 +168,4 @@ export const auditLog = [
   { ts: "2026-06-16 09:48:30", user: "system", action: "Watchlist Sync", entity: "OFAC SDN", before: "v2026.06.15", after: "v2026.06.16" },
 ];
 
-export const countries = ["Australia", "Brazil", "Canada", "China", "France", "Germany", "India", "Italy", "Japan", "Kazakhstan", "Russia", "Saudi Arabia", "Singapore", "South Africa", "Switzerland", "UAE", "United Kingdom", "United States"];
+export const countries = ["Australia", "Brazil", "Canada", "China", "Egypt", "France", "Germany", "India", "Italy", "Japan", "Kazakhstan", "Russia", "Saudi Arabia", "Singapore", "South Africa", "Switzerland", "UAE", "United Kingdom", "United States"];

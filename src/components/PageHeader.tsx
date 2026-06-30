@@ -16,7 +16,7 @@ export function PageHeader({ title, description, actions }: Props) {
         <SidebarTrigger />
         <div className="ml-2 hidden md:flex items-center gap-2 text-xs text-muted-foreground">
           <span>Compliance</span>
-          <span>/</span>
+          <span className="text-border">/</span>
           <span className="text-foreground font-medium">{title}</span>
         </div>
         <div className="ml-auto flex items-center gap-3">
@@ -26,14 +26,14 @@ export function PageHeader({ title, description, actions }: Props) {
           </div>
           <button className="relative grid h-8 w-8 place-items-center rounded-md hover:bg-accent">
             <Bell className="h-4 w-4" />
-            <span className="absolute -top-0.5 -right-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">9</span>
+            <span className="absolute -top-0.5 -right-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">9</span>
           </button>
           <Badge variant="outline" className="hidden lg:inline-flex border-success/40 bg-success/10 text-success">
             <span className="status-dot bg-success mr-1.5" /> All sources online
           </Badge>
         </div>
       </div>
-      <div className="px-6 pb-5 pt-3">
+      <div className="relative px-6 pb-5 pt-3">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
           <div className="min-w-0">
             <h1 className="truncate text-2xl font-semibold tracking-tight">{title}</h1>
@@ -41,6 +41,7 @@ export function PageHeader({ title, description, actions }: Props) {
           </div>
           {actions && <div className="shrink-0 flex items-center gap-2">{actions}</div>}
         </div>
+        <div className="gold-divider mt-4 w-24" />
       </div>
     </div>
   );

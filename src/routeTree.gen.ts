@@ -13,7 +13,6 @@ import { Route as WatchlistsRouteImport } from './routes/watchlists'
 import { Route as ScreeningRouteImport } from './routes/screening'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as CasesRouteImport } from './routes/cases'
-import { Route as BatchRouteImport } from './routes/batch'
 import { Route as AuditRouteImport } from './routes/audit'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -38,11 +37,6 @@ const CasesRoute = CasesRouteImport.update({
   path: '/cases',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BatchRoute = BatchRouteImport.update({
-  id: '/batch',
-  path: '/batch',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuditRoute = AuditRouteImport.update({
   id: '/audit',
   path: '/audit',
@@ -63,7 +57,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/audit': typeof AuditRoute
-  '/batch': typeof BatchRoute
   '/cases': typeof CasesRoute
   '/reports': typeof ReportsRoute
   '/screening': typeof ScreeningRoute
@@ -73,7 +66,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/audit': typeof AuditRoute
-  '/batch': typeof BatchRoute
   '/cases': typeof CasesRoute
   '/reports': typeof ReportsRoute
   '/screening': typeof ScreeningRoute
@@ -84,7 +76,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/audit': typeof AuditRoute
-  '/batch': typeof BatchRoute
   '/cases': typeof CasesRoute
   '/reports': typeof ReportsRoute
   '/screening': typeof ScreeningRoute
@@ -96,7 +87,6 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/audit'
-    | '/batch'
     | '/cases'
     | '/reports'
     | '/screening'
@@ -106,7 +96,6 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/audit'
-    | '/batch'
     | '/cases'
     | '/reports'
     | '/screening'
@@ -116,7 +105,6 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/audit'
-    | '/batch'
     | '/cases'
     | '/reports'
     | '/screening'
@@ -127,7 +115,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   AuditRoute: typeof AuditRoute
-  BatchRoute: typeof BatchRoute
   CasesRoute: typeof CasesRoute
   ReportsRoute: typeof ReportsRoute
   ScreeningRoute: typeof ScreeningRoute
@@ -164,13 +151,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CasesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/batch': {
-      id: '/batch'
-      path: '/batch'
-      fullPath: '/batch'
-      preLoaderRoute: typeof BatchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/audit': {
       id: '/audit'
       path: '/audit'
@@ -199,7 +179,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AuditRoute: AuditRoute,
-  BatchRoute: BatchRoute,
   CasesRoute: CasesRoute,
   ReportsRoute: ReportsRoute,
   ScreeningRoute: ScreeningRoute,
