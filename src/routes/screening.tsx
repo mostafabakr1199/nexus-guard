@@ -9,13 +9,16 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { StatusPill } from "@/components/StatusPill";
-import { Sparkles, ShieldCheck, Loader2, CheckCircle2, ArrowRight, FileText, AlertOctagon, Eye } from "lucide-react";
+import {
+  Sparkles, ShieldCheck, Loader2, CheckCircle2, ArrowRight, FileText, AlertOctagon, Eye,
+  UploadCloud, Download, FileSpreadsheet,
+} from "lucide-react";
 import { candidateMatches, screeningSources, countries } from "@/lib/mock-data";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/screening")({
-  head: () => ({ meta: [{ title: "Customer Screening — Finaira" }] }),
+  head: () => ({ meta: [{ title: "Customer Screening — Nexus Guard" }] }),
   component: Screening,
 });
 
@@ -49,7 +52,7 @@ function Screening() {
     <div className="flex min-h-screen flex-col">
       <PageHeader
         title="Customer Screening"
-        description="Screen individuals and entities against sanctions, PEP, watchlists, and adverse media."
+        description="Screen sheet uploads, individuals, and corporates against sanctions, PEP, watchlists, and adverse media."
         actions={phase === "results" ? <Button variant="outline" size="sm" onClick={() => setPhase("form")}>New Screening</Button> : null}
       />
       <div className="flex-1 p-6">
@@ -70,12 +73,18 @@ function Screening() {
 
 function ScreeningForm({ onRun }: { onRun: () => void }) {
   return (
-    <Card className="mx-auto max-w-4xl p-6">
-      <Tabs defaultValue="individual">
+    <Card className="mx-auto max-w-5xl p-6">
+      <Tabs defaultValue="sheet">
         <TabsList>
+          <TabsTrigger value="sheet">Sheet Upload</TabsTrigger>
           <TabsTrigger value="individual">Individual</TabsTrigger>
           <TabsTrigger value="corporate">Corporate</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="sheet" className="mt-6">
+          <SheetUploadPanel onRun={onRun} />
+        </TabsContent>
+
         <TabsContent value="individual" className="mt-6 space-y-5">
           <div className="grid gap-4 md:grid-cols-2">
             <Field label="Full Name *"><Input defaultValue="Alibek N. Yermekov" /></Field>
@@ -90,7 +99,12 @@ function ScreeningForm({ onRun }: { onRun: () => void }) {
             <Field label="Passport Number"><Input defaultValue="N04829112" /></Field>
             <Field label="Address"><Input defaultValue="14 Dostyk Ave, Almaty" /></Field>
           </div>
+          <div className="flex items-center justify-between border-t pt-5">
+            <p className="text-xs text-muted-foreground">Screening runs against 7 sources • SLA: under 3 seconds</p>
+            <Button onClick={onRun} className="gap-2"><ShieldCheck className="h-4 w-4" /> Run Screening</Button>
+          </div>
         </TabsContent>
+
         <TabsContent value="corporate" className="mt-6 space-y-5">
           <div className="grid gap-4 md:grid-cols-2">
             <Field label="Company Name *"><Input placeholder="e.g. Polaris Trading SA" /></Field>
@@ -101,14 +115,111 @@ function ScreeningForm({ onRun }: { onRun: () => void }) {
               </Select>
             </Field>
             <Field label="Tax Number"><Input /></Field>
+            <Field label="Beneficial Owner"><Input placeholder="Full legal name" /></Field>
+            <Field label="Industry"><Input placeholder="e.g. Maritime trading" /></Field>
+          </div>
+          <div className="flex items-center justify-between border-t pt-5">
+            <p className="text-xs text-muted-foreground">Includes beneficial-owner & sanctioned-ownership cascade checks</p>
+            <Button onClick={onRun} className="gap-2"><ShieldCheck className="h-4 w-4" /> Run Screening</Button>
           </div>
         </TabsContent>
       </Tabs>
-      <div className="mt-6 flex items-center justify-between border-t pt-5">
-        <p className="text-xs text-muted-foreground">Screening runs against 7 sources • SLA: under 3 seconds</p>
-        <Button onClick={onRun} className="gap-2"><ShieldCheck className="h-4 w-4" /> Run Screening</Button>
-      </div>
     </Card>
+  );
+}
+
+function SheetUploadPanel({ onRun }: { onRun: () => void }) {
+  const [uploaded, setUploaded] = useState(false);
+  return (
+    <div className="space-y-5">
+      {!uploaded ? (
+        <div
+          className="flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-border bg-muted/30 p-16 text-center cursor-pointer transition hover:border-primary/40 hover:bg-primary/[0.03]"
+          onClick={() => setUploaded(true)}
+        >
+          <div className="grid h-14 w-14 place-items-center rounded-full bg-primary/10">
+            <UploadCloud className="h-7 w-7 text-primary" />
+          </div>
+          <div>
+            <p className="font-semibold">Drop your CSV or XLSX here</p>
+            <p className="text-sm text-muted-foreground">or click to browse — max 100,000 rows</p>
+          </div>
+          <Button size="sm">Select File</Button>
+          <p className="mt-2 text-xs text-muted-foreground">Required columns: name, dob, country, id_number</p>
+        </div>
+      ) : (
+        <>
+          <div className="grid gap-4 md:grid-cols-4">
+            {[
+              { label: "Records Uploaded", value: "4,210" },
+              { label: "Processed", value: "4,210" },
+              { label: "Matches Found", value: "187" },
+              { label: "Failed Records", value: "3" },
+            ].map((s) => (
+              <div key={s.label} className="kpi-card pl-5">
+                <div className="text-xs uppercase tracking-wide text-muted-foreground">{s.label}</div>
+                <div className="mt-2 text-2xl font-semibold">{s.value}</div>
+              </div>
+            ))}
+          </div>
+          <Card className="p-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="flex items-center gap-2"><FileSpreadsheet className="h-4 w-4 text-primary" /> customers_q2_2026.csv</span>
+              <span className="text-muted-foreground">100% complete • 38s</span>
+            </div>
+            <Progress value={100} className="mt-3" />
+          </Card>
+          <Card>
+            <div className="flex items-center justify-between border-b p-4">
+              <div>
+                <h3 className="font-semibold">Sample of Results</h3>
+                <p className="text-xs text-muted-foreground">Showing 8 of 4,210 records</p>
+              </div>
+              <Button size="sm" variant="outline"><Download className="h-3.5 w-3.5" /> Export</Button>
+            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>#</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Country</TableHead>
+                  <TableHead>Risk Score</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {[
+                  { id: 1, name: "Acme Holdings Ltd", country: "US", status: "Clear", score: 12 },
+                  { id: 2, name: "Volkov, Maria H.", country: "RU", status: "Potential", score: 76 },
+                  { id: 3, name: "Nordwind Energy GmbH", country: "DE", status: "Clear", score: 8 },
+                  { id: 4, name: "Yermekov, Alibek N.", country: "KZ", status: "Likely", score: 94 },
+                  { id: 5, name: "Sahel Resources Holding", country: "ML", status: "Potential", score: 71 },
+                  { id: 6, name: "Jiang Wei Industries", country: "CN", status: "Clear", score: 22 },
+                  { id: 7, name: "Polaris Trading SA", country: "PA", status: "Potential", score: 68 },
+                  { id: 8, name: "Atlas Maritime Ltd", country: "GR", status: "Likely", score: 88 },
+                ].map((r) => (
+                  <TableRow key={r.id}>
+                    <TableCell className="text-muted-foreground">{r.id}</TableCell>
+                    <TableCell className="font-medium">{r.name}</TableCell>
+                    <TableCell>{r.country}</TableCell>
+                    <TableCell className="tabular-nums font-semibold">{r.score}</TableCell>
+                    <TableCell>
+                      <StatusPill variant={r.status === "Clear" ? "success" : r.status === "Potential" ? "warning" : "destructive"}>
+                        {r.status}
+                      </StatusPill>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" size="sm" onClick={() => setUploaded(false)}>Upload Another</Button>
+            <Button size="sm" onClick={onRun}>Open Detailed Results</Button>
+          </div>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -254,11 +365,11 @@ function ResultsView({ onSelect }: { onSelect: (id: string) => void }) {
 function MatchDetails({ matchId }: { matchId: string }) {
   const match = candidateMatches.find((m) => m.id === matchId) ?? candidateMatches[0];
   const rows = [
-    { label: "Name", left: "Alibek N. Yermekov", right: match.name, match: true },
-    { label: "Date of Birth", left: "1971-04-12", right: match.dob ?? "—", match: !!match.dob },
-    { label: "Nationality", left: "Kazakhstan", right: match.country === "KZ" ? "Kazakhstan" : match.country, match: match.country === "KZ" },
-    { label: "Address", left: "14 Dostyk Ave, Almaty", right: "Almaty Region (last known)", match: true },
-    { label: "Document", left: "N04829112", right: "Not on record", match: false },
+    { label: "Name", match: true },
+    { label: "Date of Birth", match: !!match.dob },
+    { label: "Nationality", match: match.country === "KZ" },
+    { label: "Address", match: true },
+    { label: "Document", match: false },
   ];
   return (
     <div className="space-y-4">
@@ -297,20 +408,6 @@ function MatchDetails({ matchId }: { matchId: string }) {
               <div className={`mt-1 text-sm font-semibold ${r.match ? "text-success" : "text-destructive"}`}>{r.match ? "Match" : "No Match"}</div>
             </div>
           ))}
-        </div>
-      </Card>
-
-      <Card className="border-info/30 bg-info/5 p-4">
-        <div className="flex items-center gap-2 text-sm font-semibold text-info"><Sparkles className="h-4 w-4" /> Why was this match detected?</div>
-        <p className="mt-2 text-sm leading-relaxed">
-          The candidate exhibits a 94% identity correlation: <b>exact name token match</b>, <b>identical DOB</b>,
-          and <b>nationality alignment</b> with OFAC SDN record SDN-29481. Phonetic variants ("A. Yermekoff",
-          "Ali Yermek") were also matched in EU and UK HMT lists. Document number could not be confirmed against
-          the source, lowering confidence slightly from 100% to 94%.
-        </p>
-        <div className="mt-3 flex items-center gap-2">
-          <span className="text-xs font-medium text-muted-foreground">Recommended Decision:</span>
-          <StatusPill variant="destructive" dot={false}>Escalate to L2</StatusPill>
         </div>
       </Card>
 
