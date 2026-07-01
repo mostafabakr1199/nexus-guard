@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { StatusPill } from "@/components/StatusPill";
-import { Plus, Edit3, Ban } from "lucide-react";
-import { watchlistInternal } from "@/lib/mock-data";
+import { Plus, Inbox } from "lucide-react";
 
 export const Route = createFileRoute("/watchlists")({
   head: () => ({ meta: [{ title: "Watchlists — Nexus Guard" }] }),
@@ -14,12 +13,8 @@ export const Route = createFileRoute("/watchlists")({
 });
 
 const regulatoryLists = [
-  { name: "OFAC SDN", entries: 18420 },
-  { name: "UN Consolidated", entries: 7180 },
-  { name: "EU Sanctions", entries: 12340 },
-  { name: "UK HMT", entries: 9870 },
-  { name: "World Bank Debarred", entries: 5210 },
-  { name: "FATF Grey List", entries: 23 },
+  { name: "Egypt Terrorism Watchlist", updated: "17 May 2026", entries: 1240 },
+  { name: "OFAC May 2026", updated: "01 May 2026", entries: 18620 },
 ];
 
 function Watchlists() {
@@ -38,14 +33,14 @@ function Watchlists() {
           </TabsList>
 
           <TabsContent value="regulatory" className="mt-4">
-            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 md:grid-cols-2">
               {regulatoryLists.map((r) => (
                 <Card key={r.name} className="p-4">
                   <div className="flex items-center justify-between">
                     <span className="font-semibold">{r.name}</span>
                     <StatusPill variant="success">Active</StatusPill>
                   </div>
-                  <p className="mt-1 text-xs text-muted-foreground">Last sync: 4 minutes ago</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Last updated: {r.updated}</p>
                   <div className="mt-3 flex justify-between text-xs">
                     <span className="text-muted-foreground">Entries</span>
                     <span className="font-medium tabular-nums">{r.entries.toLocaleString()}</span>
@@ -67,25 +62,18 @@ function Watchlists() {
                     <TableHead>Reason</TableHead>
                     <TableHead>Added By</TableHead>
                     <TableHead>Date</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {watchlistInternal.map((w) => (
-                    <TableRow key={w.id}>
-                      <TableCell className="font-mono text-xs">{w.id}</TableCell>
-                      <TableCell className="font-medium">{w.name}</TableCell>
-                      <TableCell><StatusPill variant="info" dot={false}>{w.type}</StatusPill></TableCell>
-                      <TableCell>{w.country}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{w.reason}</TableCell>
-                      <TableCell className="text-sm">{w.addedBy}</TableCell>
-                      <TableCell className="text-sm">{w.date}</TableCell>
-                      <TableCell className="text-right">
-                        <Button size="sm" variant="ghost"><Edit3 className="h-3.5 w-3.5" /></Button>
-                        <Button size="sm" variant="ghost" className="text-destructive"><Ban className="h-3.5 w-3.5" /></Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  <TableRow>
+                    <TableCell colSpan={7} className="py-16 text-center">
+                      <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                        <Inbox className="h-8 w-8" />
+                        <div className="text-sm font-medium">No entries in the internal blacklist</div>
+                        <div className="text-xs">Add an entity to begin building your internal list.</div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </Card>

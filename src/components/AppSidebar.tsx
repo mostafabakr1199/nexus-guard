@@ -1,6 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard,
   ScanSearch,
   Briefcase,
   ListChecks,
@@ -23,7 +22,6 @@ import {
 } from "@/components/ui/sidebar";
 
 const nav = [
-  { label: "Dashboard", to: "/", icon: LayoutDashboard },
   { label: "Screening", to: "/screening", icon: ScanSearch },
   { label: "Cases", to: "/cases", icon: Briefcase },
   { label: "Watchlists", to: "/watchlists", icon: ListChecks },
@@ -54,7 +52,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {nav.map((item) => {
-                const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
+                const active = pathname.startsWith(item.to);
                 return (
                   <SidebarMenuItem key={item.to}>
                     <SidebarMenuButton asChild isActive={active} tooltip={item.label}>
