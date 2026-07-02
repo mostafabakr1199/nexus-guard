@@ -12,6 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WatchlistsRouteImport } from './routes/watchlists'
 import { Route as ScreeningRouteImport } from './routes/screening'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as MyCasesRouteImport } from './routes/my-cases'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CasesRouteImport } from './routes/cases'
 import { Route as AuditRouteImport } from './routes/audit'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -30,6 +33,21 @@ const ScreeningRoute = ScreeningRouteImport.update({
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyCasesRoute = MyCasesRouteImport.update({
+  id: '/my-cases',
+  path: '/my-cases',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CasesRoute = CasesRouteImport.update({
@@ -58,6 +76,9 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/audit': typeof AuditRoute
   '/cases': typeof CasesRoute
+  '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
+  '/my-cases': typeof MyCasesRoute
   '/reports': typeof ReportsRoute
   '/screening': typeof ScreeningRoute
   '/watchlists': typeof WatchlistsRoute
@@ -67,6 +88,9 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/audit': typeof AuditRoute
   '/cases': typeof CasesRoute
+  '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
+  '/my-cases': typeof MyCasesRoute
   '/reports': typeof ReportsRoute
   '/screening': typeof ScreeningRoute
   '/watchlists': typeof WatchlistsRoute
@@ -77,6 +101,9 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/audit': typeof AuditRoute
   '/cases': typeof CasesRoute
+  '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
+  '/my-cases': typeof MyCasesRoute
   '/reports': typeof ReportsRoute
   '/screening': typeof ScreeningRoute
   '/watchlists': typeof WatchlistsRoute
@@ -88,6 +115,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/audit'
     | '/cases'
+    | '/dashboard'
+    | '/login'
+    | '/my-cases'
     | '/reports'
     | '/screening'
     | '/watchlists'
@@ -97,6 +127,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/audit'
     | '/cases'
+    | '/dashboard'
+    | '/login'
+    | '/my-cases'
     | '/reports'
     | '/screening'
     | '/watchlists'
@@ -106,6 +139,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/audit'
     | '/cases'
+    | '/dashboard'
+    | '/login'
+    | '/my-cases'
     | '/reports'
     | '/screening'
     | '/watchlists'
@@ -116,6 +152,9 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuditRoute: typeof AuditRoute
   CasesRoute: typeof CasesRoute
+  DashboardRoute: typeof DashboardRoute
+  LoginRoute: typeof LoginRoute
+  MyCasesRoute: typeof MyCasesRoute
   ReportsRoute: typeof ReportsRoute
   ScreeningRoute: typeof ScreeningRoute
   WatchlistsRoute: typeof WatchlistsRoute
@@ -142,6 +181,27 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/reports'
       preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-cases': {
+      id: '/my-cases'
+      path: '/my-cases'
+      fullPath: '/my-cases'
+      preLoaderRoute: typeof MyCasesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cases': {
@@ -180,6 +240,9 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuditRoute: AuditRoute,
   CasesRoute: CasesRoute,
+  DashboardRoute: DashboardRoute,
+  LoginRoute: LoginRoute,
+  MyCasesRoute: MyCasesRoute,
   ReportsRoute: ReportsRoute,
   ScreeningRoute: ScreeningRoute,
   WatchlistsRoute: WatchlistsRoute,

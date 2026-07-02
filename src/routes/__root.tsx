@@ -1,10 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
-  Outlet,
-  createRootRouteWithContext,
-  useRouter,
-  HeadContent,
-  Scripts,
+  Outlet, createRootRouteWithContext, useRouter, useRouterState, useNavigate,
+  HeadContent, Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -12,6 +9,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { AppProvider, useApp } from "@/lib/store";
 
 function NotFoundComponent() {
   return (
@@ -47,12 +45,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Nexus Guard — Compliance Intelligence" },
-      { name: "description", content: "AI-powered sanctions, PEP, adverse media, and watchlist screening for banks and fintechs." },
-      { property: "og:title", content: "Nexus Guard — Compliance Intelligence" },
-      { property: "og:description", content: "AI-powered sanctions, PEP, adverse media, and watchlist screening for banks and fintechs." },
-      { name: "twitter:title", content: "Nexus Guard — Compliance Intelligence" },
-      { name: "twitter:description", content: "AI-powered sanctions, PEP, adverse media, and watchlist screening for banks and fintechs." },
+      { title: "Nexus Guard — Sanctions Screening" },
+      { name: "description", content: "Enterprise sanctions screening with maker–checker workflow." },
+      { property: "og:title", content: "Nexus Guard — Sanctions Screening" },
+      { property: "og:description", content: "Enterprise sanctions screening with maker–checker workflow." },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
     ],
@@ -78,18 +74,50 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+const MANAGER_ONLY = ["/dashboard", "/cases", "/audit", "/reports", "/admin"];
+const ANALYST_ONLY = ["/my-cases"];
+
+function AuthGate({ children }: { children: ReactNode }) {
+  const { user } = useApp();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (pathname === "/login") return;
+    if (!user) { navigate({ to: "/login", replace: true }); return; }
+    if (user.role === "analyst" && MANAGER_ONLY.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+      // exception: analysts view /cases via /my-cases
+      navigate({ to: "/my-cases", replace: true });
+    }
+    if (user.role === "manager" && ANALYST_ONLY.includes(pathname)) {
+      navigate({ to: "/dashboard", replace: true });
+    }
+  }, [user, pathname, navigate]);
+
+  if (pathname === "/login") return <>{children}</>;
+  if (!user) return null;
+
+  return (
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full bg-background">
+        <AppSidebar />
+        <SidebarInset className="min-w-0 flex-1">
+          {children}
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <SidebarProvider>
-        <div className="flex min-h-screen w-full bg-background">
-          <AppSidebar />
-          <SidebarInset className="min-w-0 flex-1">
-            <Outlet />
-          </SidebarInset>
-        </div>
-      </SidebarProvider>
+      <AppProvider>
+        <AuthGate>
+          <Outlet />
+        </AuthGate>
+      </AppProvider>
     </QueryClientProvider>
   );
 }
