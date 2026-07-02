@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/PageHeader";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { StatusPill } from "@/components/StatusPill";
-import { Plus, Inbox } from "lucide-react";
+import { Inbox } from "lucide-react";
 
 export const Route = createFileRoute("/watchlists")({
   head: () => ({ meta: [{ title: "Watchlists — Nexus Guard" }] }),
@@ -20,11 +19,7 @@ const regulatoryLists = [
 function Watchlists() {
   return (
     <div className="flex min-h-screen flex-col">
-      <PageHeader
-        title="Watchlist Management"
-        description="Regulatory feeds and internal blacklists used for screening."
-        actions={<Button size="sm"><Plus className="h-4 w-4" /> Add Entity</Button>}
-      />
+      <PageHeader title="Watchlist Management" description="Regulatory feeds and internal blacklists used for screening." />
       <div className="flex-1 p-6">
         <Tabs defaultValue="regulatory">
           <TabsList>
@@ -55,13 +50,8 @@ function Watchlists() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Entity</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Country</TableHead>
-                    <TableHead>Reason</TableHead>
-                    <TableHead>Added By</TableHead>
-                    <TableHead>Date</TableHead>
+                    <TableHead>ID</TableHead><TableHead>Entity</TableHead><TableHead>Type</TableHead>
+                    <TableHead>Country</TableHead><TableHead>Reason</TableHead><TableHead>Added By</TableHead><TableHead>Date</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -70,7 +60,7 @@ function Watchlists() {
                       <div className="flex flex-col items-center gap-2 text-muted-foreground">
                         <Inbox className="h-8 w-8" />
                         <div className="text-sm font-medium">No entries in the internal blacklist</div>
-                        <div className="text-xs">Add an entity to begin building your internal list.</div>
+                        <div className="text-xs">Internal entries added here would appear in this list.</div>
                       </div>
                     </TableCell>
                   </TableRow>

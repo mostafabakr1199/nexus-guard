@@ -1,19 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/PageHeader";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-import { auditLog } from "@/lib/mock-data";
+import { useApp } from "@/lib/store";
 
 export const Route = createFileRoute("/audit")({
-  head: () => ({ meta: [{ title: "Audit Trail — Finaira" }] }),
+  head: () => ({ meta: [{ title: "Audit Trail — Nexus Guard" }] }),
   component: AuditPage,
 });
 
 function AuditPage() {
+  const { audit } = useApp();
   return (
     <div className="flex min-h-screen flex-col">
       <PageHeader
@@ -22,44 +21,16 @@ function AuditPage() {
         actions={<Button size="sm" variant="outline"><Download className="h-4 w-4" /> Export</Button>}
       />
       <div className="flex-1 space-y-4 p-6">
-        <Card className="p-4">
-          <div className="grid gap-3 md:grid-cols-4">
-            <Input placeholder="Search user, entity…" />
-            <Input type="date" />
-            <Select defaultValue="all"><SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All actions</SelectItem>
-                <SelectItem value="Case Escalated">Case Escalated</SelectItem>
-                <SelectItem value="Screening Run">Screening Run</SelectItem>
-                <SelectItem value="Match Reviewed">Match Reviewed</SelectItem>
-                <SelectItem value="Watchlist Sync">Watchlist Sync</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select defaultValue="all"><SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All users</SelectItem>
-                <SelectItem value="a.okafor">a.okafor</SelectItem>
-                <SelectItem value="s.whitmore">s.whitmore</SelectItem>
-                <SelectItem value="system">system</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </Card>
-
         <Card>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Timestamp</TableHead>
-                <TableHead>User</TableHead>
-                <TableHead>Action</TableHead>
-                <TableHead>Entity</TableHead>
-                <TableHead>Before</TableHead>
-                <TableHead>After</TableHead>
+                <TableHead>Timestamp</TableHead><TableHead>User</TableHead><TableHead>Action</TableHead>
+                <TableHead>Entity</TableHead><TableHead>Before</TableHead><TableHead>After</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {auditLog.map((a, i) => (
+              {audit.map((a, i) => (
                 <TableRow key={i}>
                   <TableCell className="font-mono text-xs">{a.ts}</TableCell>
                   <TableCell><span className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">{a.user}</span></TableCell>
